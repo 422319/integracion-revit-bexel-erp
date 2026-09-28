@@ -1,0 +1,1163 @@
+﻿<Window x:Class="RevitFamilyCleaner.SeleccionMurosWindow"
+        x:Name="RootWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:RevitFamilyCleaner"
+        Title="Seleccionar muros para sincronizar"
+        Height="750"
+        Width="950"
+        MinHeight="600"
+        MinWidth="850"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F7FA"
+        FontFamily="Segoe UI"
+        FontSize="12">
+
+    <!-- ========================================================= -->
+    <!-- RECURSOS Y ESTILOS -->
+    <!-- ========================================================= -->
+
+    <Window.Resources>
+
+        <local:CategoriaColorConverter x:Key="ColorPorCategoria"/>
+
+
+        <!-- COLORES -->
+        <SolidColorBrush x:Key="AzulPrincipal" Color="#063B73"/>
+        <SolidColorBrush x:Key="AzulOscuro" Color="#052F5F"/>
+        <SolidColorBrush x:Key="AzulMedio" Color="#0A4D8C"/>
+        <SolidColorBrush x:Key="AzulClaro" Color="#EAF2FB"/>
+        <SolidColorBrush x:Key="AzulSeleccion" Color="#33CCFF"/>
+
+        <SolidColorBrush x:Key="FondoVentana" Color="#F5F7FA"/>
+        <SolidColorBrush x:Key="FondoTabla" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="Borde" Color="#D9E0E8"/>
+        <SolidColorBrush x:Key="BordeClaro" Color="#E5EAF0"/>
+
+        <SolidColorBrush x:Key="TextoPrincipal" Color="#243447"/>
+        <SolidColorBrush x:Key="TextoSecundario" Color="#607080"/>
+
+        <!-- ===================================================== -->
+        <!-- ESTILO GENERAL DE BOTONES -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="BotonBase" TargetType="Button">
+
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="MinWidth" Value="105"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#34495E"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border
+                            x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="Background"
+                                    Value="#F0F5FA"/>
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="#9DB4CC"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="Background"
+                                    Value="#DDE8F3"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="Opacity"
+                                    Value="0.55"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- BOTÓN PRINCIPAL -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="BotonPrincipal"
+               TargetType="Button"
+               BasedOn="{StaticResource BotonBase}">
+
+            <Setter Property="MinWidth" Value="150"/>
+            <Setter Property="Background" Value="{StaticResource AzulPrincipal}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AzulPrincipal}"/>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border
+                            x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="Background"
+                                    Value="{StaticResource AzulMedio}"/>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+
+                                <Setter
+                                    TargetName="Bd"
+                                    Property="Background"
+                                    Value="{StaticResource AzulOscuro}"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- ESTILO ENCABEZADO DEL DATAGRID -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="EncabezadoDataGrid"
+               TargetType="DataGridColumnHeader">
+
+            <Setter Property="Background"
+                    Value="{StaticResource AzulPrincipal}"/>
+
+            <Setter Property="Foreground"
+                    Value="White"/>
+
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Setter Property="Height"
+                    Value="27"/>
+
+            <Setter Property="Padding"
+                    Value="5,0"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#174E85"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0,0,1,0"/>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- CELDAS DEL DATAGRID -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="CeldaDataGrid"
+               TargetType="DataGridCell">
+
+            <Setter Property="Padding"
+                    Value="5,0"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Setter Property="Foreground"
+                    Value="{StaticResource TextoPrincipal}"/>
+
+            <Setter Property="BorderBrush"
+                    Value="{StaticResource BordeClaro}"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0,0,1,1"/>
+
+            <Setter Property="Background"
+                    Value="Transparent"/>
+
+            <Style.Triggers>
+
+                <Trigger Property="IsSelected"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="{StaticResource AzulSeleccion}"/>
+
+                    <Setter Property="Foreground"
+                            Value="{StaticResource AzulOscuro}"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- FILAS DEL DATAGRID -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="FilaDataGrid"
+               TargetType="DataGridRow">
+
+            <Setter Property="Height"
+                    Value="25"/>
+
+            <Setter Property="Background"
+                    Value="{Binding Categoria, Converter={StaticResource ColorPorCategoria}}"/>
+
+            <Setter Property="BorderBrush"
+                    Value="{StaticResource BordeClaro}"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0,0,0,1"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Style.Triggers>
+
+                <!-- FILA SELECCIONADA -->
+                <Trigger Property="IsSelected"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="{StaticResource AzulSeleccion}"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- CHECKBOX -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="CheckBoxTabla"
+               TargetType="CheckBox">
+
+            <Setter Property="HorizontalAlignment"
+                    Value="Center"/>
+
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- COMBOBOX DE LA TABLA -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="ComboBoxTabla"
+               TargetType="ComboBox">
+
+            <Setter Property="Height"
+                    Value="23"/>
+
+            <Setter Property="Margin"
+                    Value="2,0"/>
+
+            <Setter Property="Padding"
+                    Value="5,0"/>
+
+            <Setter Property="Background"
+                    Value="Transparent"/>
+
+            <Setter Property="BorderBrush"
+                    Value="Transparent"/>
+
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+
+            <Setter Property="Foreground"
+                    Value="#174A7A"/>
+
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Style.Triggers>
+
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="#F0F6FC"/>
+
+                    <Setter Property="BorderBrush"
+                            Value="#B8CCE0"/>
+
+                </Trigger>
+
+                <Trigger Property="IsKeyboardFocusWithin"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="#FFFFFF"/>
+
+                    <Setter Property="BorderBrush"
+                            Value="#6D9BC8"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- TEXTBOX DE LA TABLA -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="TextBoxTabla"
+               TargetType="TextBox">
+
+            <Setter Property="Height"
+                    Value="23"/>
+
+            <Setter Property="Padding"
+                    Value="4,0"/>
+
+            <Setter Property="Margin"
+                    Value="2,0"/>
+
+            <Setter Property="Background"
+                    Value="Transparent"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="Foreground"
+                    Value="{StaticResource TextoPrincipal}"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
+            <Style.Triggers>
+
+                <Trigger Property="IsKeyboardFocusWithin"
+                         Value="True">
+
+                    <Setter Property="Background"
+                            Value="#F1F6FB"/>
+
+                    <Setter Property="BorderThickness"
+                            Value="1"/>
+
+                    <Setter Property="BorderBrush"
+                            Value="#8EB2D4"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- TREEVIEW -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="TreeItemEstilo"
+               TargetType="TreeViewItem">
+
+            <Setter Property="Padding"
+                    Value="2,1"/>
+
+            <Setter Property="Margin"
+                    Value="0"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch"/>
+
+            <Setter Property="Foreground"
+                    Value="{StaticResource TextoPrincipal}"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#E5EAF0"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0,0,0,1"/>
+
+        </Style>
+
+
+        <!-- ===================================================== -->
+        <!-- TEXTO DEL ÁRBOL -->
+        <!-- ===================================================== -->
+
+        <Style x:Key="TextoArbol"
+               TargetType="TextBlock">
+
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+
+            <Setter Property="FontSize"
+                    Value="12"/>
+
+            <Setter Property="Foreground"
+                    Value="{StaticResource TextoPrincipal}"/>
+
+        </Style>
+
+    </Window.Resources>
+
+
+    <!-- ========================================================= -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ========================================================= -->
+
+    <Grid Background="{StaticResource FondoVentana}"
+          Margin="10">
+
+        <Grid.RowDefinitions>
+
+            <!-- Título -->
+            <RowDefinition Height="Auto"/>
+
+            <!-- Tabla de muros -->
+            <RowDefinition Height="2*"/>
+
+            <!-- Encabezado informe -->
+            <RowDefinition Height="Auto"/>
+
+            <!-- Árbol -->
+            <RowDefinition Height="1.25*"/>
+
+            <!-- Botones -->
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+
+
+        <!-- ===================================================== -->
+        <!-- CABECERA / SECCIÓN 1 -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="0"
+              Margin="0,0,0,7">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+
+
+            <!-- Número 1 -->
+
+            <Border Grid.Column="0"
+                    Width="20"
+                    Height="20"
+                    CornerRadius="10"
+                    Background="{StaticResource AzulPrincipal}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
+
+                <TextBlock Text="1"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+
+            <!-- Título -->
+
+            <TextBlock Grid.Column="1"
+                       Text="Marca los muros que quieres enviar al backend:"
+                       FontWeight="SemiBold"
+                       FontSize="12"
+                       Foreground="{StaticResource TextoPrincipal}"
+                       VerticalAlignment="Center"/>
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- TABLA DE MUROS -->
+        <!-- ===================================================== -->
+
+        <Border Grid.Row="1"
+                Background="{StaticResource FondoTabla}"
+                BorderBrush="{StaticResource Borde}"
+                BorderThickness="1"
+                CornerRadius="3">
+
+            <DataGrid x:Name="GridMuros"
+
+                      SelectionChanged="GridMuros_SelectionChanged"
+
+                      AutoGenerateColumns="False"
+
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      CanUserReorderColumns="False"
+
+                      CanUserResizeRows="False"
+                      CanUserResizeColumns="True"
+
+                      CanUserSortColumns="False"
+
+                      IsReadOnly="False"
+
+                      HeadersVisibility="Column"
+
+                      RowHeaderWidth="0"
+
+                      GridLinesVisibility="Horizontal"
+
+                      HorizontalGridLinesBrush="#E5EAF0"
+
+                      VerticalGridLinesBrush="#E5EAF0"
+
+                      Background="White"
+
+                      BorderThickness="0"
+
+                      RowHeight="25"
+
+                      ColumnHeaderHeight="27"
+
+                      AlternationCount="2"
+
+                      SelectionMode="Single"
+
+                      SelectionUnit="FullRow"
+
+                      EnableRowVirtualization="True"
+
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+
+                      ColumnHeaderStyle="{StaticResource EncabezadoDataGrid}"
+
+                      CellStyle="{StaticResource CeldaDataGrid}"
+
+                      RowStyle="{StaticResource FilaDataGrid}">
+
+
+                <DataGrid.Columns>
+
+
+                    <!-- ========================================= -->
+                    <!-- ENVIAR -->
+                    <!-- ========================================= -->
+
+                    <DataGridCheckBoxColumn
+                        Header="Enviar"
+                        Binding="{Binding Seleccionado}"
+                        Width="55"
+                        IsReadOnly="False"
+                        ElementStyle="{StaticResource CheckBoxTabla}"/>
+
+
+                    <!-- ========================================= -->
+                    <!-- NOMBRE -->
+                    <!-- ========================================= -->
+
+                    <DataGridTextColumn
+                        Header="Nombre"
+                        Binding="{Binding Nombre}"
+                        Width="*"
+                        MinWidth="180"
+                        IsReadOnly="True"/>
+
+
+                    <!-- ========================================= -->
+                    <!-- UNIDAD -->
+                    <!-- ========================================= -->
+
+                    <DataGridTemplateColumn
+                        Header="Uni."
+                        Width="70"
+                        MinWidth="60">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <ComboBox
+                                    Style="{StaticResource ComboBoxTabla}"
+
+                                    Foreground="{StaticResource TextoPrincipal}"
+
+                                    SelectionChanged="ComboUnidad_SelectionChanged"
+
+                                    SelectedItem="{Binding Unidad, Mode=TwoWay}">
+
+                                    <sys:String>M2</sys:String>
+                                    <sys:String>M3</sys:String>
+                                    <sys:String>ML</sys:String>
+                                    <sys:String>UND</sys:String>
+
+                                </ComboBox>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <!-- ========================================= -->
+                    <!-- METRADO -->
+                    <!-- ========================================= -->
+
+                    <DataGridTextColumn
+                        Header="Metrado"
+                        Binding="{Binding Metrado, StringFormat={}{0:0.00}}"
+                        Width="90"
+                        IsReadOnly="True"/>
+
+
+                    <!-- ========================================= -->
+                    <!-- DISCIPLINA -->
+                    <!-- ========================================= -->
+
+                    <DataGridTemplateColumn
+                        Header="Disciplina"
+                        Width="160"
+                        MinWidth="140">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <ComboBox
+                                    Style="{StaticResource ComboBoxTabla}"
+
+                                    IsEditable="True"
+
+                                    Foreground="#174A7A"
+
+                                    Text="{Binding Columna1,
+                                           UpdateSourceTrigger=PropertyChanged}">
+
+                                    <ComboBoxItem
+                                        Content="ARQUITECTURA"/>
+
+                                    <ComboBoxItem
+                                        Content="ESTRUCTURA"/>
+
+                                    <ComboBoxItem
+                                        Content="INSTALACIONES ELÉCTRICAS"/>
+
+                                    <ComboBoxItem
+                                        Content="INSTALACIONES SANITARIAS"/>
+
+                                    <ComboBoxItem
+                                        Content="OTROS"/>
+
+                                </ComboBox>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <!-- ========================================= -->
+                    <!-- SUB DISCIPLINA 1 -->
+                    <!-- ========================================= -->
+
+                    <DataGridTemplateColumn
+                        Header="Sub-Disciplina 1"
+                        Width="120"
+                        MinWidth="100">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <ComboBox
+                                    Style="{StaticResource ComboBoxTabla}"
+
+                                    IsEditable="True"
+
+                                    Foreground="{StaticResource TextoPrincipal}"
+
+                                    ItemsSource="{Binding ElementName=RootWindow, Path=SugerenciasSub1}"
+
+                                    LostFocus="ComboSub1_LostFocus"
+
+                                    Text="{Binding Columna2,
+                                           UpdateSourceTrigger=PropertyChanged}"/>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                    <!-- ========================================= -->
+                    <!-- SUB DISCIPLINA 2 -->
+                    <!-- ========================================= -->
+
+                    <DataGridTemplateColumn
+                        Header="Sub-Disciplina 2"
+                        Width="120"
+                        MinWidth="100">
+
+                        <DataGridTemplateColumn.CellTemplate>
+
+                            <DataTemplate>
+
+                                <ComboBox
+                                    Style="{StaticResource ComboBoxTabla}"
+
+                                    IsEditable="True"
+
+                                    Foreground="{StaticResource TextoPrincipal}"
+
+                                    ItemsSource="{Binding ElementName=RootWindow, Path=SugerenciasSub2}"
+
+                                    LostFocus="ComboSub2_LostFocus"
+
+                                    Text="{Binding Columna3,
+                                           UpdateSourceTrigger=PropertyChanged}"/>
+
+                            </DataTemplate>
+
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Border>
+
+
+        <!-- ===================================================== -->
+        <!-- CABECERA / SECCIÓN 2 -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="2"
+              Height="28"
+              Margin="0,8,0,4">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="65"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="90"/>
+
+            </Grid.ColumnDefinitions>
+
+
+            <!-- Número 2 -->
+
+            <Border Grid.Column="0"
+                    Width="20"
+                    Height="20"
+                    CornerRadius="10"
+                    Background="{StaticResource AzulPrincipal}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
+
+                <TextBlock Text="2"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+
+            <!-- Enviar -->
+
+            <Border Grid.Column="1"
+                    Background="{StaticResource AzulPrincipal}">
+
+                <TextBlock Text="Enviar"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+
+            <!-- Item -->
+
+            <Border Grid.Column="2"
+                    Background="{StaticResource AzulPrincipal}">
+
+                <TextBlock Text="Item"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           VerticalAlignment="Center"
+                           Margin="6,0"/>
+
+            </Border>
+
+
+            <!-- Descripción -->
+
+            <Border Grid.Column="3"
+                    Background="{StaticResource AzulPrincipal}">
+
+                <TextBlock Text="Descripción"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           VerticalAlignment="Center"
+                           Margin="6,0"/>
+
+            </Border>
+
+
+            <!-- Uni -->
+
+            <Border Grid.Column="4"
+                    Background="{StaticResource AzulPrincipal}">
+
+                <TextBlock Text="uni"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+
+            <!-- Metrado -->
+
+            <Border Grid.Column="5"
+                    Background="{StaticResource AzulPrincipal}">
+
+                <TextBlock Text="METRADO"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           FontSize="10"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            </Border>
+
+        </Grid>
+
+
+        <!-- ===================================================== -->
+        <!-- ÁRBOL / INFORME -->
+        <!-- ===================================================== -->
+
+        <Border Grid.Row="3"
+                Background="White"
+                BorderBrush="{StaticResource Borde}"
+                BorderThickness="1"
+                CornerRadius="3">
+
+            <TreeView x:Name="ArbolInforme"
+
+                      BorderThickness="0"
+
+                      Background="White"
+
+                      Padding="2"
+
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+
+                      SelectedItemChanged="ArbolInforme_SelectedItemChanged">
+
+                <TreeView.Resources>
+
+                    <Style TargetType="TreeViewItem"
+                           BasedOn="{StaticResource TreeItemEstilo}"/>
+
+                </TreeView.Resources>
+
+
+                <TreeView.ItemTemplate>
+
+                    <HierarchicalDataTemplate
+                        ItemsSource="{Binding Hijos}">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="45"/>
+
+                                <ColumnDefinition Width="65"/>
+
+                                <ColumnDefinition Width="*"/>
+
+                                <ColumnDefinition Width="90"/>
+
+                                <ColumnDefinition Width="90"/>
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- ENVIAR -->
+
+                            <CheckBox
+                                Grid.Column="0"
+
+                                Style="{StaticResource CheckBoxTabla}"
+
+                                IsThreeState="True"
+
+                                IsChecked="{Binding Seleccionado, Mode=TwoWay}"/>
+
+
+                            <!-- ITEM -->
+
+                            <TextBlock
+                                Grid.Column="1"
+
+                                Text="{Binding Item}"
+
+                                Style="{StaticResource TextoArbol}"
+
+                                Foreground="#1260A0"
+
+                                FontWeight="SemiBold"
+
+                                Margin="3,0"/>
+
+
+                            <!-- DESCRIPCIÓN -->
+
+                            <TextBlock
+                                Grid.Column="2"
+
+                                Text="{Binding Nombre}"
+
+                                Style="{StaticResource TextoArbol}"
+
+                                Padding="4,0"
+
+                                TextTrimming="CharacterEllipsis"/>
+
+
+                            <!-- UNIDAD -->
+
+                            <TextBlock
+                                Grid.Column="3"
+
+                                Text="{Binding UnidadTexto}"
+
+                                Style="{StaticResource TextoArbol}"
+
+                                Foreground="#7A0C2E"
+
+                                FontWeight="SemiBold"
+
+                                HorizontalAlignment="Center"
+
+                                TextAlignment="Center"/>
+
+
+                            <!-- METRADO -->
+
+                            <TextBlock
+                                Grid.Column="4"
+
+                                Text="{Binding MetradoTexto}"
+
+                                Style="{StaticResource TextoArbol}"
+
+                                Foreground="#7A0C2E"
+
+                                FontWeight="SemiBold"
+
+                                HorizontalAlignment="Center"
+
+                                TextAlignment="Center"/>
+
+                        </Grid>
+
+                    </HierarchicalDataTemplate>
+
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+
+        </Border>
+
+
+        <!-- ===================================================== -->
+        <!-- BOTONES -->
+        <!-- ===================================================== -->
+
+        <Grid Grid.Row="4"
+              Margin="0,9,0,0">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*"/>
+
+                <ColumnDefinition Width="Auto"/>
+
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+
+
+                <!-- MARCAR TODOS -->
+
+                <Button
+                    Content="☑  Marcar todos"
+
+                    Style="{StaticResource BotonBase}"
+
+                    Width="112"
+
+                    Click="MarcarTodos_Click"/>
+
+
+                <!-- DESMARCAR -->
+
+                <Button
+                    Content="☐  Desmarcar todos"
+
+                    Style="{StaticResource BotonBase}"
+
+                    Width="125"
+
+                    Click="DesmarcarTodos_Click"/>
+
+
+                <!-- GUARDAR -->
+
+                <Button
+                    Content="▣  Guardar"
+
+                    Style="{StaticResource BotonBase}"
+
+                    Width="105"
+
+                    Click="Guardar_Click"/>
+
+
+                <!-- ENVIAR -->
+
+                <Button
+                    Content="➤  Enviar seleccionados"
+
+                    Style="{StaticResource BotonPrincipal}"
+
+                    Width="155"
+
+                    Margin="0"
+
+                    Click="Enviar_Click"/>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
+
+</Window>

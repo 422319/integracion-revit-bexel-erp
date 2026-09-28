@@ -1,7 +1,76 @@
-node_modules/
+# ===== .NET / Revit =====
 bin/
 obj/
-.vs/
 *.user
+*.suo
+.vs/
+packages/
+*.dll
+*.pdb
+*.cache
 
+# ===== Node =====
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.next/
+out/
+.cache/
+
+# ===== Python (por si el backend es Python) =====
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+
+# ===== Secrets (CRÍTICO) =====
 .env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+secrets.json
+appsettings.*.json
+
+# ===== Modelos BIM pesados =====
+*.rvt
+*.rfa
+*.rte
+*.nwc
+*.nwd
+*.ifc
+*.ifczip
+*.glb
+*.gltf
+
+# ===== IFC / Visor / assets pesados =====
+*.fbx
+*.obj
+*.mtl
+*.3ds
+*.max
+
+# ===== Sistema =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===== Logs =====
+*.log
+logs/
